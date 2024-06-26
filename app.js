@@ -39,8 +39,10 @@ app.all('*', (req, res, next) => {
     next();
   }
 });
+const MongoStore = connectMongo.create({
+  mongoUrl: config.sessionStorageURL
+});
 
-const MongoStore = connectMongo(session);
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(bodyParser.json({}));
 app.use(cookieParser());
@@ -54,9 +56,7 @@ app.use(session({
     secure: false,
     maxAge: 365 * 24 * 60 * 60 * 1000,
   },
-  store: new MongoStore({
-    url: config.sessionStorageURL
-  })
+  store: MongoStore
 }));
 router(app);
 // app.use(history());
@@ -66,3 +66,4 @@ console.log('*********************************')
 app.listen(config.port);
 
 module.exports = app;
+
